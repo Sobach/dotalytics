@@ -5,9 +5,24 @@ a.selected {
 }
 
 .ui-controlgroup {
-    width:90% !important;
+  width:90% !important;
 }
 
 .ui-button.opt2 {
-    width:38% !important;
+  width:38% !important;
+}
+
+svg#map {
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+}
+
+div#top-menu {
+  height: 50px;
+}
+
+div.main-content {
+  overflow-y: hidden;
+  overflow-x: hidden;
 }

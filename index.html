@@ -16,27 +16,27 @@
       <fieldset>
         <legend><i class="icon-flag"></i>&nbsp;Match Result</legend>
         <label for="result-win" class="opt2">Win</label>
-        <input type="checkbox" name="result-win" id="result-win">
+        <input type="checkbox" name="result-win" id="result-win" checked>
         <label for="result-loose" class="opt2">Loose</label>
-        <input type="checkbox" name="result-loose" id="result-loose">
+        <input type="checkbox" name="result-loose" id="result-loose" checked>
       </fieldset>
       <br/>
       <br/>
       <fieldset>
         <legend><i class="icon-grid-off"></i>&nbsp;Team Side</legend>
         <label for="team-radiant" class="opt2">Radiant</label>
-        <input type="checkbox" name="team-radiant" id="team-radiant">
+        <input type="checkbox" name="team-radiant" id="team-radiant" checked>
         <label for="team-dire" class="opt2">Dire</label>
-        <input type="checkbox" name="team-dire" id="team-dire">
+        <input type="checkbox" name="team-dire" id="team-dire" checked>
       </fieldset>
       <br/>
       <br/>
       <fieldset>
         <legend><i class="icon-visibility"></i>&nbsp;Ward Type</legend>
         <label for="ward-observer" class="opt2">Observer</label>
-        <input type="checkbox" name="ward-observer" id="ward-observer">
+        <input type="checkbox" name="ward-observer" id="ward-observer" checked>
         <label for="ward-sentry" class="opt2">Sentry</label>
-        <input type="checkbox" name="ward-sentry" id="ward-sentry">
+        <input type="checkbox" name="ward-sentry" id="ward-sentry" checked>
       </fieldset>
       <br/>
       <br/>
@@ -54,58 +54,31 @@
       </fieldset>
       <br/>
       <br/>
-      <fieldset>
+      <fieldset id="players-checkboxes">
         <legend><i class="icon-person"></i>&nbsp;Players</legend>
-        <label for="player-1" class="opt2">Player 1</label>
-        <input type="checkbox" name="player-1" id="player-1">
-        <label for="player-2" class="opt2">Player 2</label>
-        <input type="checkbox" name="player-2" id="player-2">
-        <label for="player-3" class="opt2">Player 3</label>
-        <input type="checkbox" name="player-3" id="player-3">
-        <label for="player-4" class="opt2">Player 4</label>
-        <input type="checkbox" name="player-4" id="player-4">
-        <label for="player-5" class="opt2">Player 5</label>
-        <input type="checkbox" name="player-5" id="player-5">
-        <label for="player-6" class="opt2">Player 6</label>
-        <input type="checkbox" name="player-6" id="player-6">
-        <label for="player-7" class="opt2">Player 7</label>
-        <input type="checkbox" name="player-7" id="player-7">
-        <label for="player-8" class="opt2">Player 8</label>
-        <input type="checkbox" name="player-8" id="player-8">
-        <label for="player-9" class="opt2">Player 9</label>
-        <input type="checkbox" name="player-9" id="player-9">
       </fieldset>
       <br/>
       <br/>
-      <fieldset>
+      <fieldset id="heroes-checkboxes">
         <legend><i class="icon-keyboard-alt"></i>&nbsp;Heroes</legend>
-        <label for="hero-1" class="opt2">Hero 1</label>
-        <input type="checkbox" name="hero-1" id="hero-1">
-        <label for="hero-2" class="opt2">Hero 2</label>
-        <input type="checkbox" name="hero-2" id="hero-2">
-        <label for="hero-3" class="opt2">Hero 3</label>
-        <input type="checkbox" name="hero-3" id="hero-3">
-        <label for="hero-4" class="opt2">Hero 4</label>
-        <input type="checkbox" name="hero-4" id="hero-4">
-        <label for="hero-5" class="opt2">Hero 5</label>
-        <input type="checkbox" name="hero-5" id="hero-5">
       </fieldset>
     </div>
   </div>
   <div class="main-content">
     <div class="header toolbar-group navbar bg-indigo-500 color-white">
-      <button class="icon-button" onclick="SideMenu.toggle(document.querySelector('#dashboard-sidemenu'))"><i class="icon-filter"></i></button>
+      <button class="icon-button" id="side-menu-button"><i class="icon-filter"></i></button>
       <label class="toolbar-label">dotalytics v0.02</label>
-      <div class="float-right">
+      <div class="float-right" id="top-menu">
         <a href="#" class="selected ripple">WardMap</a>
         <a href="#" class="ripple">SmokeMap</a>
         <a href="#" class="ripple">DraftGraph</a>
       </div>
     </div>
-
+    <svg id="map"></svg>
   </div>
   <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="scripts/jquery.resize.js"></script>
   <script src="scripts/material.min.js"></script>
   <script src="//d3js.org/d3.v4.min.js"></script>
   <script src="scripts/tile.js"></script>
