@@ -1,0 +1,13 @@
+a.selected {
+  color : #fff;
+  font-weight : bold;
+  text-decoration: underline;
+}
+
+.ui-controlgroup {
+    width:90% !important;
+}
+
+.ui-button.opt2 {
+    width:38% !important;
+}
