@@ -10,17 +10,13 @@ function zeros(dimensions) {
   return array;
 }
 
-function circle2zeros(x,y, ward_type){
+function circle2zeros(x,y){
   var zer = zeros([128, 128]),
     circle = [3, 6, 8, 9, 10, 11, 11, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 12, 12, 12, 11, 11, 10, 9, 8, 6, 3];
-  if(ward_type=="sen_log"){
-    circle = [2, 4, 5, 6, 6, 7, 7, 7, 7, 7, 6, 6, 5, 4, 2];
-  }
-  var r = d3.max(circle);
   for(var i=0; i<circle.length; i++){
     for(var j=-1*circle[i]; j<circle[i]; j++){
-      var y_coord = y - r + i,
-        x_coord = x + j;
+      var y_coord = y-13+i,
+        x_coord = x+j;
       if (y_coord >= 0 & y_coord < 128 & x_coord >= 0 & x_coord < 128) {
         zer[y_coord][x_coord] = 1;
       }
@@ -33,18 +29,18 @@ function Map(container_id){
   var self = this;
   self.container = container_id;
   self.svg = d3.select(this.container);
-  self.svg.append("filter")
-    .attr("id", "constantOpacity")
-    .append("feComponentTransfer")
-      .append("feFuncA")
-        .attr("type", "table")
-        .attr("tableValues", "0 .5 .5");
-
   self.raster = this.svg.append("g");
+  /*
+  self.vector = this.svg.append("canvas")
+    .attr("id", "heatmap")
+    .attr("width", 128)
+    .attr("height", 128)
+    .style("width", "100%")
+    .style("height", "100%");
+  */
 
   self.vector = this.svg.append("g");
-
-  self.vector.attr("filter", "url(#constantOpacity)");
+  self.vector.append("image");
   self.tile = d3.tile();
 
   self.fog_filter = {
@@ -149,23 +145,12 @@ function Map(container_id){
       return acc;
     }, []);
     self.toPlotArray();
-    var maxval = d3.max(self.fog_data);
-    //self.drawFog();
-    self.vector.selectAll("path")
-      .data(d3.contours()
-          .size([128, 128])
-          .thresholds(d3.range(1, maxval+1, (maxval-1)/9))
-          (self.fog_data));
-    self.vector.selectAll("path")
-      .transition()
-      .duration(1000)
-      .ease(d3.easeCubic)
-        .attr("d", d3.geoPath(d3.geoIdentity()));
+    self.drawFog();
   }
 
   this.addCirclesToData = function(datapoint){
     datapoint.y = 128 - datapoint.y;
-    var zarr = circle2zeros(datapoint.x, datapoint.y, datapoint.ward_type);
+    var zarr = circle2zeros(datapoint.x, datapoint.y);
     datapoint.arr = zarr;
     return datapoint;
   }
@@ -184,24 +169,33 @@ function Map(container_id){
   }
 
   this.drawFog = function(){
-    var maxval = d3.max(self.fog_data),
-        palet = ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"].map(function(x){ return d3.rgb(x) }).reverse(),
-        color = d3.scaleLinear().domain(d3.range(1, maxval+1, (maxval-1)/(palet.length-1)))
-          .interpolate(d3.interpolateHcl)
-          .range(palet);
+    var canvas = document.createElement("canvas");
+    canvas.width=128;
+    canvas.height=128;
+    var color = d3.scaleSequential().domain([1, d3.max(self.fog_data)]).interpolator(d3.interpolateWarm);
+    var context = canvas.getContext("2d"),
+      image = context.createImageData(128, 128);
+    //console.log(d3.max(self.fog_data));
 
-    self.vector.selectAll("path")
-      .data(d3.contours()
-          .size([128, 128])
-          .thresholds(d3.range(1, maxval+1, (maxval-1)/9))
-          (self.fog_data))
-        .enter().append("path")
-          .attr("d", d3.geoPath(d3.geoIdentity()))
-          .attr("stroke", "#fff")
-          .style("stroke-opacity", function(d){ return d.value == 0 ? 0 : .9 })
-          .style("stroke-width", .1)
-          .attr("fill", function(d) { return color(d.value); })
-          .style("fill-opacity", function(d){ return d.value == 0 ? 0 : .5 });
+    for (var j = 0, k = 0, l = 0; j < 128; ++j) {
+      for (var i = 0; i < 128; ++i, ++k, l += 4) {
+        var c = d3.rgb(color(self.fog_data[k]));
+        image.data[l + 0] = c.r;
+        image.data[l + 1] = c.g;
+        image.data[l + 2] = c.b;
+        if(self.fog_data[k]==0){
+          image.data[l + 3] = 0;
+        }else{
+          image.data[l + 3] = 100;
+        }
+        
+      }
+    }
+
+    context.putImageData(image, 0, 0);
+
+    self.vector.select("image")
+      .attr("href", canvas.toDataURL());
   }
 
   this.updateFilters = function(){
