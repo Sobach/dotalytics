@@ -12,6 +12,14 @@
 <body class="dark-theme">
   <div class="sidemenu sidebar responsive" id="dashboard-sidemenu" hidden>
     <div class="section">
+      <h1>Team</h1>
+      <select name="team" id="team">
+        <option>Slower</option>
+        <option>Slow</option>
+        <option selected="selected">Medium</option>
+        <option>Fast</option>
+        <option>Faster</option>
+        </select>
       <h1>Filters</h1>
       <fieldset id="result-checkboxes">
         <legend><i class="icon-flag"></i>&nbsp;Match Result</legend>
@@ -83,7 +91,6 @@
   <script src="//d3js.org/d3.v4.min.js"></script>
   <script src="scripts/tile.js"></script>
   <script src="scripts/d3-contour.v1.min.js"></script>
-  <script src="scripts/d3-interpolate-path.js"></script>
   <script src="scripts/dashboard.js"></script>
 </body>
 </html>

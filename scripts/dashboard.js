@@ -137,30 +137,8 @@ function Map(container_id){
       self.wards_data = self.all_wards;
       self.updateFilters();
       self.toPlotArray();
-      self.drawFog();
+      self.redrawFog();
     });
-  }
-
-  this.redrawFog = function(){
-    self.wards_data = self.all_wards.reduce(function(acc, x){
-      if(self.fog_filter.win.indexOf(x.win) >= 0 & self.fog_filter.side.indexOf(x.side) >= 0 & self.fog_filter.ward_type.indexOf(x.ward_type) >= 0 & self.fog_filter.playername.indexOf(x.playername) >= 0 & self.fog_filter.heroname.indexOf(x.heroname) >= 0 & self.fog_filter.start_time[0] <= x.start_time & x.start_time <= self.fog_filter.start_time[1] & self.fog_filter.ward_time[0] <= x.ward_end_time & x.ward_start_time <= self.fog_filter.ward_time[1]){
-        acc.push(x);
-      };
-      return acc;
-    }, []);
-    self.toPlotArray();
-    var maxval = d3.max(self.fog_data);
-    //self.drawFog();
-    self.vector.selectAll("path")
-      .data(d3.contours()
-          .size([128, 128])
-          .thresholds(d3.range(1, maxval+1, (maxval-1)/9))
-          (self.fog_data));
-    self.vector.selectAll("path")
-      .transition()
-      .duration(1000)
-      .ease(d3.easeCubic)
-        .attr("d", d3.geoPath(d3.geoIdentity()));
   }
 
   this.addCirclesToData = function(datapoint){
@@ -183,25 +161,46 @@ function Map(container_id){
     self.fog_data = self.fog_data.reduce(function(a, b){ return a.concat(b); }, []);
   }
 
-  this.drawFog = function(){
+  this.redrawFog = function(){
+    self.wards_data = self.all_wards.reduce(function(acc, x){
+      if(self.fog_filter.win.indexOf(x.win) >= 0 & self.fog_filter.side.indexOf(x.side) >= 0 & self.fog_filter.ward_type.indexOf(x.ward_type) >= 0 & self.fog_filter.playername.indexOf(x.playername) >= 0 & self.fog_filter.heroname.indexOf(x.heroname) >= 0 & self.fog_filter.start_time[0] <= x.start_time & x.start_time <= self.fog_filter.start_time[1] & self.fog_filter.ward_time[0] <= x.ward_end_time & x.ward_start_time <= self.fog_filter.ward_time[1]){
+        acc.push(x);
+      };
+      return acc;
+    }, []);
+    self.toPlotArray();
     var maxval = d3.max(self.fog_data),
         palet = ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"].map(function(x){ return d3.rgb(x) }).reverse(),
         color = d3.scaleLinear().domain(d3.range(1, maxval+1, (maxval-1)/(palet.length-1)))
           .interpolate(d3.interpolateHcl)
           .range(palet);
 
-    self.vector.selectAll("path")
+    console.log(d3.sum(self.fog_data));
+
+    var selection = self.vector.selectAll("path")
       .data(d3.contours()
           .size([128, 128])
           .thresholds(d3.range(1, maxval+1, (maxval-1)/9))
-          (self.fog_data))
-        .enter().append("path")
-          .attr("d", d3.geoPath(d3.geoIdentity()))
-          .attr("stroke", "#fff")
-          .style("stroke-opacity", function(d){ return d.value == 0 ? 0 : .9 })
-          .style("stroke-width", .1)
-          .attr("fill", function(d) { return color(d.value); })
-          .style("fill-opacity", function(d){ return d.value == 0 ? 0 : .5 });
+          (self.fog_data));
+    
+    selection.exit()
+      .transition(1000)
+        .attr("fill-opacity", 1e-6)
+        .remove();
+
+    selection
+      .transition()
+      .duration(1000)
+      .ease(d3.easeCubic)
+        .attr("d", d3.geoPath(d3.geoIdentity()));
+
+    selection.enter().append("path")
+      .attr("d", d3.geoPath(d3.geoIdentity()))
+      .attr("stroke", "#fff")
+      .style("stroke-opacity", function(d){ return d.value == 0 ? 0 : .9 })
+      .style("stroke-width", .1)
+      .attr("fill", function(d) { return color(d.value); })
+      .style("fill-opacity", function(d){ return d.value == 0 ? 0 : .5 });
   }
 
   this.updateFilters = function(){
@@ -408,6 +407,7 @@ function init() {
 
   $( "input" ).checkboxradio();
   $( "fieldset" ).controlgroup();
+  $( "#team" ).selectmenu();
 
   
 

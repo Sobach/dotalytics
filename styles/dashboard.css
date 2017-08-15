@@ -26,3 +26,11 @@ div.main-content {
   overflow-y: hidden;
   overflow-x: hidden;
 }
+
+div.ui-front {
+  z-index: 1000 !important;
+}
+
+span.ui-selectmenu-button.ui-button {
+  width: 88%;
+}
